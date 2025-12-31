@@ -88,6 +88,29 @@ export const createWorkloadAfterChange: CollectionAfterChangeHook<
       doc.port +
       ' --id ' +
       doc.id
+
+    // Handle image classification usecase (uses DLStreamer-style streaming)
+    if (doc.usecase === 'image classification') {
+      usecaseName = 'image-classification'
+
+      if (doc.port) params += ' --tcp_port ' + (doc.port + 1000)
+      if (doc.source && doc.source.name) {
+        if (doc.source.type !== 'cam') {
+          params += ' --input ' + path.join(ASSETS_PATH, doc.source.name)
+        } else {
+          params += ' --input ' + doc.source.name
+        }
+      }
+      let numStreams: number | undefined = undefined
+      if (isDLStreamerMetadata(doc.metadata)) {
+        numStreams = doc.metadata.numStreams
+      }
+
+      if (typeof numStreams === 'number' && numStreams > 0) {
+        params += ' --number_of_streams ' + numStreams
+      }
+    }
+
     if (doc.usecase.includes('(DLStreamer') && doc.source && doc.source.name) {
       if (doc.usecase === 'instance segmentation (DLStreamer)') {
         usecaseName = 'instance-segmentation'

@@ -102,18 +102,20 @@ export default function SystemInformationPage() {
                       <span className="font-medium">Used Memory:</span>
                       <span>
                         {memoryData.data &&
+                        memoryData.data.used !== undefined &&
                         memoryData.data.used !== NOT_AVAILABLE
-                          ? `${memoryData.data.used.toFixed(1)} GB (${memoryData.data.usedPercentage.toFixed(0)}%)`
-                          : memoryData.data.used}
+                          ? `${memoryData.data.used.toFixed(1)} GB (${memoryData.data.usedPercentage?.toFixed(0) ?? 0}%)`
+                          : (memoryData.data?.used ?? 'N/A')}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="font-medium">Free Memory:</span>
                       <span>
                         {memoryData.data &&
+                        memoryData.data.free !== undefined &&
                         memoryData.data.free !== NOT_AVAILABLE
-                          ? `${memoryData.data.free.toFixed(1)} GB (${memoryData.data.freePercentage.toFixed(0)}%)`
-                          : memoryData.data.free}
+                          ? `${memoryData.data.free.toFixed(1)} GB (${memoryData.data.freePercentage?.toFixed(0) ?? 0}%)`
+                          : (memoryData.data?.free ?? 'N/A')}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">

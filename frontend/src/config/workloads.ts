@@ -223,6 +223,22 @@ export const metadata: MetadataStructure = {
             },
           },
         },
+        'image classification': {
+          model: {
+            'resnet-18-pytorch': {
+              devicesFiltered: [],
+              allowMultipleDevices: false,
+            },
+            'mobilenet-v2-pytorch': {
+              devicesFiltered: [],
+              allowMultipleDevices: false,
+            },
+            'efficientnet-b0-pytorch': {
+              devicesFiltered: [],
+              allowMultipleDevices: false,
+            },
+          },
+        },
         'text-to-image': {
           model: {
             'dreamlike-art/dreamlike-anime-1.0': {

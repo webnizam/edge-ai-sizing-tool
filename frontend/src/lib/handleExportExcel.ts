@@ -8,6 +8,7 @@ import { TextGenerationPerformanceMetrics } from '@/types/textgen-types'
 import { AudioPerformanceMetrics } from '@/types/audio-types'
 import { DlStreamerPerformanceMetrics } from '@/types/dlstreamer-types'
 import { TtsPerformanceMetrics } from '@/types/text2speech-types'
+import { ImageClassificationPerformanceMetrics } from '@/types/image-classification-types'
 import {
   useCpuUtilization,
   useGpuUtilization,
@@ -85,6 +86,7 @@ interface WorkloadInfo {
     | AudioPerformanceMetrics
     | DlStreamerPerformanceMetrics
     | TtsPerformanceMetrics
+    | ImageClassificationPerformanceMetrics
     | null
 }
 

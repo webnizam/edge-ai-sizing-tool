@@ -67,8 +67,8 @@ export default function DashboardPage() {
                       <HardDrive className="h-4 w-4" /> Memory Usage
                     </span>
                     <span>
-                      {memoryData.data?.used.toFixed(1) ?? 0} GB /{' '}
-                      {memoryData.data?.total.toFixed(0) ?? 0} GB
+                      {memoryData.data?.used?.toFixed(1) ?? 0} GB /{' '}
+                      {memoryData.data?.total?.toFixed(0) ?? 0} GB
                     </span>
                   </div>
                   <Progress value={memoryData.data?.usedPercentage ?? 0} />

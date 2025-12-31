@@ -217,7 +217,9 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
     const { task, usecase, model, metadata, devices, source } = addWorkload
     setIsDisable(true)
     if (task && usecase) {
-      if (usecase.includes('DLStreamer')) {
+      const needsVideoSource =
+        usecase.includes('DLStreamer') || usecase === 'image classification'
+      if (needsVideoSource) {
         if (model === 'custom_model') {
           setIsDisable(
             !model ||
@@ -256,10 +258,10 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
   const handleAddWorkload = async () => {
     setIsLoading(true)
     try {
-      if (
-        addWorkload.usecase?.includes('DLStreamer') &&
-        addWorkload.source?.type === 'file'
-      ) {
+      const needsVideoSource =
+        addWorkload.usecase?.includes('DLStreamer') ||
+        addWorkload.usecase === 'image classification'
+      if (needsVideoSource && addWorkload.source?.type === 'file') {
         const file = selectedInputFileRef.current
         if (file) {
           const response = await uploadmedia.mutateAsync(file)
@@ -304,11 +306,13 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
         device: item.device,
       }))
 
-      const isDLStreamer = addWorkload.usecase?.includes('DLStreamer')
+      const needsNumStreams =
+        addWorkload.usecase?.includes('DLStreamer') ||
+        addWorkload.usecase === 'image classification'
       const response: WorkloadResponse = await createWorkload.mutateAsync({
         ...addWorkload,
         devices: transformedDevice,
-        ...(isDLStreamer && {
+        ...(needsNumStreams && {
           numStreams: getNumStreams(addWorkload.metadata),
         }),
       })
@@ -343,12 +347,15 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
 
   const handleUseCaseChange = (selectedUseCase: UsecaseType) => {
     if (addWorkload.task) {
+      const needsVideoSource =
+        selectedUseCase.includes('DLStreamer') ||
+        selectedUseCase === 'image classification'
       setAddWorkload({
         ...addWorkload,
         usecase: selectedUseCase,
         model: addWorkload.model === 'custom_model' ? 'custom_model' : '',
         devices: [],
-        source: selectedUseCase.includes('DLStreamer')
+        source: needsVideoSource
           ? {
               type: 'predefined-videos',
               name: 'people-detection.mp4',
@@ -359,7 +366,7 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
           ...(isMetadataObject(addWorkload.metadata)
             ? addWorkload.metadata
             : {}),
-          numStreams: selectedUseCase.includes('DLStreamer') ? 1 : undefined,
+          numStreams: needsVideoSource ? 1 : undefined,
         },
       })
 
@@ -677,7 +684,8 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
                       </Select>
                     </div>
 
-                    {addWorkload.usecase?.includes('(DLStreamer)') && (
+                    {(addWorkload.usecase?.includes('(DLStreamer)') ||
+                      addWorkload.usecase === 'image classification') && (
                       <div className="grid gap-2">
                         <Label htmlFor="input">Input</Label>
                         <Select
@@ -910,9 +918,10 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
                             name="model-type"
                             value="huggingface"
                             checked={modelSelectionType === 'huggingface'}
-                            disabled={addWorkload.usecase?.includes(
-                              'DLStreamer',
-                            )}
+                            disabled={
+                              addWorkload.usecase?.includes('DLStreamer') ||
+                              addWorkload.usecase === 'image classification'
+                            }
                             onChange={(e) => {
                               setModelSelectionType(
                                 e.target.value as
@@ -1073,9 +1082,10 @@ export default function WorkloadForm({ workload }: { workload?: Workload }) {
                             value={addWorkload.model || ''}
                             onChange={(e) => handleModelChange(e.target.value)}
                             className="font-normal"
-                            disabled={addWorkload.usecase?.includes(
-                              'DLStreamer',
-                            )}
+                            disabled={
+                              addWorkload.usecase?.includes('DLStreamer') ||
+                              addWorkload.usecase === 'image classification'
+                            }
                           />
                           <p className="text-muted-foreground text-xs">
                             Enter the model ID from Hugging Face Hub (format:

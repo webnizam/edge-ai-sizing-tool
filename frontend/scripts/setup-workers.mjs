@@ -30,12 +30,19 @@ function getPythonPathWindows() {
 function getPythonPathUnix() {
   try {
     const { execFileSync } = require('child_process')
-    return execFileSync('/usr/bin/which', ['python3'], {
-      encoding: 'utf8',
-    }).trim()
+    // Try python3.12 first, then fall back to python3
+    try {
+      return execFileSync('/usr/bin/which', ['python3.12'], {
+        encoding: 'utf8',
+      }).trim()
+    } catch {
+      return execFileSync('/usr/bin/which', ['python3'], {
+        encoding: 'utf8',
+      }).trim()
+    }
   } catch (error) {
     // Default fallback
-    return 'python3'
+    return 'python3.12'
   }
 }
 
@@ -43,6 +50,7 @@ function getPythonPathUnix() {
 const ALLOWED_COMMANDS = {
   python: isWindows ? getPythonPathWindows() : getPythonPathUnix(),
   python3: getPythonPathUnix(),
+  'python3.12': getPythonPathUnix(),
 }
 
 // A simple sanitizer for arguments
@@ -99,7 +107,7 @@ async function setupWorker(workerDir) {
   console.log(`[${getTimestamp()}] Setting up worker in ${workerDir}`)
 
   // Decide which command name to call based on OS (must match ALLOWED_COMMANDS keys)
-  const pythonCmd = isWindows ? 'python' : 'python3'
+  const pythonCmd = isWindows ? 'python' : 'python3.12'
 
   // Create the virtual environment
   await runCommand(pythonCmd, ['-m', 'venv', 'venv'], { cwd: workerDir })

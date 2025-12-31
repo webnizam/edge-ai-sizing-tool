@@ -11,6 +11,7 @@ import { Text2Img } from '@/components/usecase/text2img'
 import { TextGen } from '@/components/usecase/textgen'
 import { Audio } from '@/components/usecase/audio'
 import { Text2Speech } from '@/components/usecase/text2speech'
+import { ImageClassification } from '@/components/usecase/image-classification'
 import React, { useRef, useState } from 'react'
 import { useWorkload } from '@/hooks/useWorkload'
 import { DlStreamer } from '@/components/usecase/dlstreamer'
@@ -23,6 +24,7 @@ import { TextGenerationPerformanceMetrics } from '@/types/textgen-types'
 import { AudioPerformanceMetrics } from '@/types/audio-types'
 import { DlStreamerPerformanceMetrics } from '@/types/dlstreamer-types'
 import { TtsPerformanceMetrics } from '@/types/text2speech-types'
+import { ImageClassificationPerformanceMetrics } from '@/types/image-classification-types'
 import { useChartErrors } from '@/hooks/useChartErrors'
 
 // Workload type definition
@@ -41,7 +43,7 @@ export default function WorkloadPage({
   const [isExportingExcel, setIsExportingExcel] = useState(false)
   const { utilizationInfo } = useTrimmedUtilization()
   const { sysInfo } = useProcessedSystemInfo()
-  const [performanceMetrics, setPerformanceMetrics] = useState<TextToImagePerformanceMetrics | TextGenerationPerformanceMetrics | AudioPerformanceMetrics | DlStreamerPerformanceMetrics | TtsPerformanceMetrics | null>(null)
+  const [performanceMetrics, setPerformanceMetrics] = useState<TextToImagePerformanceMetrics | TextGenerationPerformanceMetrics | AudioPerformanceMetrics | DlStreamerPerformanceMetrics | TtsPerformanceMetrics | ImageClassificationPerformanceMetrics | null>(null)
 
   const { hasErrors, isLoading: chartsLoading } = useChartErrors()
 
@@ -108,6 +110,8 @@ export default function WorkloadPage({
         return <DlStreamer workload={workload} setPerformanceMetrics={setPerformanceMetrics} />
       case 'text-to-speech':
         return <Text2Speech workload={workload} setPerformanceMetrics={setPerformanceMetrics} />
+      case 'image classification':
+        return <ImageClassification workload={workload} setPerformanceMetrics={setPerformanceMetrics} />
       default:
         return (
           <div className="container py-10 text-center">
